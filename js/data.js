@@ -2,7 +2,7 @@ import {getRandomInteger} from './util.js';
 import {getRandomFloat} from './util.js';
 import {getRandomArrayElement} from './util.js';
 
-const OFFERS_COUNT = 10;
+const OFFERS_COUNT = 1;
 
 const titles = [
   'Комфортный номер',
