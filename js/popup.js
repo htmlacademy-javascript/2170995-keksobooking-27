@@ -7,12 +7,12 @@ const createCard = getOffers();
 
 const similarListFragment = document.createDocumentFragment();
 
-const TYPE = {
-  flat: 'Квартира',
-  bungalow: 'Бунгало',
-  house: 'Дом',
-  palace: 'Дворец',
-  hotel: 'Отель',
+const TYPES = {
+  bungalow: {ru: 'Бунгало', minPrice: 0},
+  flat: {ru: 'Квартира', minPrice: 1000},
+  hotel: {ru: 'Отель', minPrice: 3000},
+  house: {ru: 'Дом', minPrice: 5000},
+  palace: {ru: 'Дворец', minPrice: 10000},
 };
 
 const renderDescription = (cardElement, description) => {
@@ -69,7 +69,7 @@ createCard.forEach (({ author, offer }) => {
   cardTemplateElement.querySelector('.popup__title').textContent = offer.title;
   cardTemplateElement.querySelector('.popup__text--address').textContent = offer.adress;
   cardTemplateElement.querySelector('[data-price]').textContent = offer.price;
-  cardTemplateElement.querySelector('.popup__type').textContent = TYPE[offer.type];
+  cardTemplateElement.querySelector('.popup__type').textContent = TYPES[offer.type].ru;
   cardTemplateElement.querySelector('.popup__text--capacity').textContent = `${offer.rooms} комнаты для ${offer.guests} гостей`;
   cardTemplateElement.querySelector('.popup__text--time').textContent = `Заезд после ${offer.checkin}, выезд до ${offer.checkout}`;
 
@@ -83,3 +83,4 @@ createCard.forEach (({ author, offer }) => {
 
 map.appendChild(similarListFragment);
 export {createCard};
+export {TYPES};
