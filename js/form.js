@@ -1,3 +1,5 @@
+import {TYPES} from './popup.js';
+
 const adForm = document.querySelector('.ad-form');
 // Pristine
 
@@ -7,8 +9,11 @@ const pristine = new Pristine(adForm, {
   successClass: 'ad-form__element--valid',
   errorTextParent: 'ad-form__element',
   errorTextClass: 'text-help',
-});
+},
+true
+);
 
+// Валидация для кол-ва комнат и кол-ва мест
 const room = adForm.querySelector('[name="rooms"]');
 const capacity = adForm.querySelector('[name="capacity"]');
 const roomOption = {
@@ -51,6 +56,43 @@ function getCapacityErrorMessage () {
 pristine.addValidator(room, validateRoom, getRoomErrorMessage);
 pristine.addValidator(capacity, validateCapacity, getCapacityErrorMessage);
 
+
+// Валидатор для типа жилья и цены
+const typeOfHousing = adForm.querySelector('[name="type"]');
+const price = adForm.querySelector('[name="price"]');
+
+typeOfHousing.addEventListener('change', () => {
+  price.min = TYPES[typeOfHousing.value].minPrice;
+  price.placeholder = TYPES[typeOfHousing.value].minPrice;
+});
+
+
+function validatePrice() {
+  return TYPES[typeOfHousing.value].minPrice <= price.value;
+}
+
+function getPriceErrorMessage () {
+  if (price.value < TYPES[typeOfHousing.value].minPrice) {
+    return `Минимальная цена от ${TYPES[typeOfHousing.value].minPrice}`;
+  }
+}
+
+pristine.addValidator(price, validatePrice, getPriceErrorMessage);
+
+
+// Синхронизация времени заезда/выезда
+const checkInTime = adForm.querySelector('[name="timein"]');
+const checkOutTime = adForm.querySelector('[name="timeout"]');
+
+checkInTime.addEventListener('change', () => {
+  checkOutTime.value = checkInTime.value;
+});
+
+checkOutTime.addEventListener('change', () => {
+  checkInTime.value = checkOutTime.value;
+});
+
+//  Слушатель для отправки формы
 adForm.addEventListener('submit', (evt) => {
   evt.preventDefault();
   pristine.validate();
