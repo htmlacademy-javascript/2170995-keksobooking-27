@@ -1,12 +1,24 @@
 import {getOffers} from './data.js';
-import {createCard} from './popup.js';
-import {getAdFormDisabled, getAdFormOn} from './form.js';
+import {getAdFormDisabled, getAdFormOn, setAddresValue} from './form.js';
 import {getMapFilterDisabled, getMapFilterOn} from './filter.js';
+import {initMap, setOnMapLoad, setOnMainPinMove, setAdPins} from './map.js';
 
-getOffers();
-// eslint-disable-next-line no-unused-expressions
-createCard;
+
+const START_COORDINATE = {
+  lat: 35.68518,
+  lng: 139.768066
+};
+
+const offers = getOffers();
+
+setOnMapLoad (() => {
+  setOnMainPinMove(setAddresValue);
+  setAddresValue(START_COORDINATE);
+  getAdFormOn();
+  setAdPins(offers);
+  getMapFilterOn();
+});
+
 getAdFormDisabled();
-getAdFormOn();
 getMapFilterDisabled();
-getMapFilterOn();
+initMap(START_COORDINATE);
