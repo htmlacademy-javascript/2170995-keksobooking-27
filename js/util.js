@@ -38,6 +38,8 @@ const getRandomFloat = (min, max, numberSigns = 1) => {
 
 // Функция рандомайзер для массивов
 const getRandomArrayElement = (elements) => elements[getRandomInteger(0, elements.length - 1)];
+
+
 // Экспортируем вспомогательные функции
 export {getRandomInteger};
 export {getRandomFloat};

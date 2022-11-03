@@ -1,19 +1,10 @@
 import {TYPES} from './popup.js';
 
 const adForm = document.querySelector('.ad-form');
-// Pristine
 
-const pristine = new Pristine(adForm, {
-  classTo: 'ad-form__element',
-  errorClass: 'ad-form__element--invalid',
-  successClass: 'ad-form__element--valid',
-  errorTextParent: 'ad-form__element',
-  errorTextClass: 'text-help',
-},
-true
-);
+const typeOfHousing = adForm.querySelector('[name="type"]');
+const price = adForm.querySelector('[name="price"]');
 
-// Валидация для кол-ва комнат и кол-ва мест
 const room = adForm.querySelector('[name="rooms"]');
 const capacity = adForm.querySelector('[name="capacity"]');
 const roomOption = {
@@ -29,6 +20,23 @@ const capacityOption = {
   'не для гостей': ['100 комнат'],
 };
 
+const checkInTime = adForm.querySelector('[name="timein"]');
+const checkOutTime = adForm.querySelector('[name="timeout"]');
+
+const adress = adForm.querySelector('[name="address"]');
+
+// Pristine
+const pristine = new Pristine(adForm, {
+  classTo: 'ad-form__element',
+  errorClass: 'ad-form__element--invalid',
+  successClass: 'ad-form__element--valid',
+  errorTextParent: 'ad-form__element',
+  errorTextClass: 'text-help',
+},
+true
+);
+
+// Валидация для кол-ва комнат и кол-ва мест
 function validateRoom() {
   return roomOption[room.value].includes(capacity.value);
 }
@@ -58,14 +66,10 @@ pristine.addValidator(capacity, validateCapacity, getCapacityErrorMessage);
 
 
 // Валидатор для типа жилья и цены
-const typeOfHousing = adForm.querySelector('[name="type"]');
-const price = adForm.querySelector('[name="price"]');
-
 typeOfHousing.addEventListener('change', () => {
   price.min = TYPES[typeOfHousing.value].minPrice;
   price.placeholder = TYPES[typeOfHousing.value].minPrice;
 });
-
 
 function validatePrice() {
   return TYPES[typeOfHousing.value].minPrice <= price.value;
@@ -81,9 +85,6 @@ pristine.addValidator(price, validatePrice, getPriceErrorMessage);
 
 
 // Синхронизация времени заезда/выезда
-const checkInTime = adForm.querySelector('[name="timein"]');
-const checkOutTime = adForm.querySelector('[name="timeout"]');
-
 checkInTime.addEventListener('change', () => {
   checkOutTime.value = checkInTime.value;
 });
@@ -91,6 +92,43 @@ checkInTime.addEventListener('change', () => {
 checkOutTime.addEventListener('change', () => {
   checkInTime.value = checkOutTime.value;
 });
+
+// noUiSlider
+const priceSliderElement = document.querySelector('.ad-form__slider');
+
+noUiSlider.create(priceSliderElement, {
+  range: {
+    min: 0,
+    max: 100000,
+  },
+  start: TYPES[typeOfHousing.value].minPrice,
+  step: 1,
+  connect: 'lower',
+  format: {
+    to: function (value) {
+      if (Number.isInteger(value)) {
+        return value.toFixed(0);
+      }
+      return value.toFixed(0);
+    },
+    from: function (value) {
+      return (value);
+    },
+  },
+});
+
+
+priceSliderElement.noUiSlider.on('update', () => {
+  price.value = priceSliderElement.noUiSlider.get();
+});
+
+
+// обработчик адреса
+const setAddresValue = (value) => {
+  adress.value = value;
+};
+
+adress.readOnly = true;
 
 //  Слушатель для отправки формы
 adForm.addEventListener('submit', (evt) => {
@@ -116,5 +154,6 @@ const getAdFormOn = () => {
   });
 };
 
-export {getAdFormDisabled, getAdFormOn};
+
+export {getAdFormDisabled, getAdFormOn, setAddresValue};
 

@@ -1,11 +1,4 @@
-import {getOffers} from './data.js';
-
 const cardTemplate = document.querySelector('#card').content.querySelector('.popup');
-const map = document.querySelector('#map-canvas');
-
-const createCard = getOffers();
-
-const similarListFragment = document.createDocumentFragment();
 
 const TYPES = {
   bungalow: {ru: 'Бунгало', minPrice: 0},
@@ -63,7 +56,7 @@ const renderPhoto = (cardElement, photos, title) => {
   }
 };
 
-createCard.forEach (({ author, offer }) => {
+const createOffers = ({ author, offer }) => {
   const cardTemplateElement = cardTemplate.cloneNode(true);
   cardTemplateElement.querySelector('.popup__avatar').src = author.avatar;
   cardTemplateElement.querySelector('.popup__title').textContent = offer.title;
@@ -76,11 +69,9 @@ createCard.forEach (({ author, offer }) => {
   renderDescription(cardTemplateElement, offer.description);
   renderFeatures(cardTemplateElement, offer.features);
   renderPhoto(cardTemplateElement, offer.photos, offer.title);
-  similarListFragment.appendChild(cardTemplateElement);
+
   return cardTemplateElement;
 
-});
-
-map.appendChild(similarListFragment);
-export {createCard};
+};
+export {createOffers};
 export {TYPES};
