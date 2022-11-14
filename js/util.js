@@ -1,46 +1,26 @@
-// Источники: developer.mozilla.org
-// Рандомайзер для целых чисел
-const getRandomInteger = (min, max) => {
-  min = Math.ceil(min);
-  max = Math.floor(max);
-  if (typeof min !== 'number' || typeof max !== 'number') {
-    return NaN;
-  }
-  if (min < 0 || max < 0) {
-    return NaN;
-  }
-  if (max <= min) {
-    const replacement = max;
-    max = min;
-    min = replacement;
-  }
-  return Math.floor(Math.random() * (max - min + 1)) + min;
+const ALERT_SHOW_TIME = 5000;
+
+const showAlert = (message) => {
+  const alertContainer = document.createElement('div');
+  alertContainer.style.zIndex = '100';
+  alertContainer.style.position = 'absolute';
+  alertContainer.style.left = '0';
+  alertContainer.style.top = '0';
+  alertContainer.style.right = '0';
+  alertContainer.style.padding = '10px 3px';
+  alertContainer.style.fontSize = '30px';
+  alertContainer.style.textAlign = 'center';
+  alertContainer.style.backgroundColor = 'red';
+
+  alertContainer.textContent = message;
+
+  document.body.append(alertContainer);
+
+  setTimeout(() => {
+    alertContainer.remove();
+  }, ALERT_SHOW_TIME);
 };
 
-//  рандомайзер для чисел с плавающей точкой
-const getRandomFloat = (min, max, numberSigns = 1) => {
-  min = Math.ceil(min);
-  max = Math.floor(max);
-  if (typeof min !== 'number' || typeof max !== 'number' || typeof numberSigns !== 'number') {
-    return NaN;
-  }
-  if (min < 0 || max < 0 || numberSigns < 0) {
-    return NaN;
-  }
-  if (max <= min) {
-    const replacement = max;
-    max = min;
-    min = replacement;
-  }
-  const result = Math.random() * (max - min) + min;
-  return +result.toFixed(numberSigns);
+export {
+  showAlert
 };
-
-// Функция рандомайзер для массивов
-const getRandomArrayElement = (elements) => elements[getRandomInteger(0, elements.length - 1)];
-
-
-// Экспортируем вспомогательные функции
-export {getRandomInteger};
-export {getRandomFloat};
-export {getRandomArrayElement};

@@ -1,6 +1,8 @@
 import {TYPES} from './popup.js';
 
 const adForm = document.querySelector('.ad-form');
+const submitButton = adForm.querySelector('.ad-form__submit');
+const adFormReset = adForm.querySelector('.ad-form__reset');
 
 const typeOfHousing = adForm.querySelector('[name="type"]');
 const price = adForm.querySelector('[name="price"]');
@@ -8,22 +10,23 @@ const price = adForm.querySelector('[name="price"]');
 const room = adForm.querySelector('[name="rooms"]');
 const capacity = adForm.querySelector('[name="capacity"]');
 const roomOption = {
-  '1 комната': ['для 1 гостя'],
-  '2 комнаты': ['для 1 гостя', 'для 2 гостей'],
-  '3 комнаты': ['для 1 гостя', 'для 2 гостей', 'для 3 гостей'],
-  '100 комнат': ['не для гостей'],
+  '1': ['1'],
+  '2': ['1', '2'],
+  '3': ['1', '2', '3'],
+  '100': ['0'],
 };
 const capacityOption = {
-  'для 1 гостя': ['1 комната', '2 комнаты', '3 комнаты'],
-  'для 2 гостей': ['2 комнаты', '3 комнаты'],
-  'для 3 гостей': ['3 комнаты'],
-  'не для гостей': ['100 комнат'],
+  '1': ['1', '2', '3'],
+  '2': ['2', '3'],
+  '3': ['3'],
+  '0': ['100'],
 };
 
 const checkInTime = adForm.querySelector('[name="timein"]');
 const checkOutTime = adForm.querySelector('[name="timeout"]');
 
 const adress = adForm.querySelector('[name="address"]');
+const priceSliderElement = document.querySelector('.ad-form__slider');
 
 // Pristine
 const pristine = new Pristine(adForm, {
@@ -46,19 +49,11 @@ function validateCapacity() {
 }
 
 function getRoomErrorMessage () {
-  return `
-    ${room.value}
-    ${capacity.value}
-    ${room.value !== '1 комната' ? 'не подходят' : 'не подходит'}
-  `;
+  return 'Выберите другое количество мест';
 }
 
 function getCapacityErrorMessage () {
-  return `
-  ${capacity.value}
-  ${room.value}
-  ${room.value !== '1 комната' ? 'не подходят' : 'не подходит'}
-  `;
+  return 'Выберите другое количество комнат';
 }
 
 pristine.addValidator(room, validateRoom, getRoomErrorMessage);
@@ -94,8 +89,6 @@ checkOutTime.addEventListener('change', () => {
 });
 
 // noUiSlider
-const priceSliderElement = document.querySelector('.ad-form__slider');
-
 noUiSlider.create(priceSliderElement, {
   range: {
     min: 0,
@@ -124,18 +117,11 @@ priceSliderElement.noUiSlider.on('update', () => {
 
 
 // обработчик адреса
-const setAddresValue = (value) => {
-  adress.value = value;
+const setAddresValue = ({lat, lng}) => {
+  adress.value = `${lat.toFixed(5)}, ${lng.toFixed(5)}`;
 };
 
 adress.readOnly = true;
-
-//  Слушатель для отправки формы
-adForm.addEventListener('submit', (evt) => {
-  evt.preventDefault();
-  pristine.validate();
-});
-
 
 // Функции для блокировки - разблокировки форм
 const getAdFormDisabled = () => {
@@ -154,6 +140,53 @@ const getAdFormOn = () => {
   });
 };
 
+// Блокировка \ разблокировка кнопки submit
+const blockSubmitButton = () => {
+  submitButton.disabled = true;
+  submitButton.textContent = 'Отправляю...';
+};
 
-export {getAdFormDisabled, getAdFormOn, setAddresValue};
+const unblockSubmitButton = () => {
+  submitButton.disabled = false;
+  submitButton.textContent = 'Отправить';
+};
+
+// Сброс формы
+const resetForm = () => {
+  adForm.reset();
+  priceSliderElement.noUiSlider.set(price.value);
+  price.value = TYPES[typeOfHousing.value].minPrice;
+};
+
+// Слушатель для кнопки 'reset'
+const setOnResetClick = (cb) => {
+  adFormReset.addEventListener('click', (evt) => {
+    evt.preventDefault();
+    resetForm();
+    cb();
+  });
+};
+
+//  Слушатель для отправки формы
+const setOnFormSubmit = (cb) => {
+  adForm.addEventListener('submit', async (evt) => {
+    evt.preventDefault();
+    const isValid = pristine.validate();
+
+    if (isValid) {
+      blockSubmitButton();
+      await cb(new FormData(evt.target));
+      unblockSubmitButton();
+    }
+  });
+};
+
+export {
+  getAdFormDisabled,
+  getAdFormOn,
+  setAddresValue,
+  resetForm,
+  setOnFormSubmit,
+  setOnResetClick
+};
 

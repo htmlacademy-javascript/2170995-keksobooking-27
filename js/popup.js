@@ -17,19 +17,16 @@ const renderDescription = (cardElement, description) => {
   }
 };
 
-const renderFeatures = (cardElement, features) => {
-  const fiaturesList = cardElement.querySelector('.popup__features');
-  const fiaturesListItems = fiaturesList.querySelectorAll('.popup__feature');
+const renderFeatures = (features) => {
+  const fiaturesListFragment = document.createDocumentFragment();
 
-  fiaturesListItems.forEach((listItem) => {
-    const isNecessary = features.some(
-      (feature) => listItem.classList.contains(`popup__feature--${ feature }`),
-    );
+  features.forEach((userFiatures) =>{
+    const feature = document.createElement('li');
+    feature.classList.add('popup__feature', `popup__feature--${ userFiatures }`);
 
-    if (!isNecessary) {
-      listItem.remove();
-    }
+    fiaturesListFragment.append(feature);
   });
+  return fiaturesListFragment;
 };
 
 const createPhoto = (photo, title) => {
@@ -67,7 +64,14 @@ const createOffers = ({ author, offer }) => {
   cardTemplateElement.querySelector('.popup__text--time').textContent = `Заезд после ${offer.checkin}, выезд до ${offer.checkout}`;
 
   renderDescription(cardTemplateElement, offer.description);
-  renderFeatures(cardTemplateElement, offer.features);
+  const cardFeatures = cardTemplateElement.querySelector('.popup__features');
+  cardFeatures.innerHTML = '';
+  if(offer.features) {
+    const newFeatureElements = renderFeatures(offer.features);
+    cardFeatures.appendChild(newFeatureElements);
+  } else {
+    cardFeatures.remove();
+  }
   renderPhoto(cardTemplateElement, offer.photos, offer.title);
 
   return cardTemplateElement;
