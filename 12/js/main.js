@@ -23,7 +23,10 @@ const onGetDataSuccess = (offers) => {
   getMapFilterOn();
   checkAllFilters(offers);
   changeFilters(debounce(() => checkAllFilters(offers), TIMEOUT_DELAY));
-  setOnResetClick(() => checkAllFilters(offers));
+  setOnResetClick(() => {
+    resetCoordinate();
+    checkAllFilters(offers);
+  });
 };
 
 // действия после отправки формы
@@ -42,9 +45,6 @@ setOnMapLoad (() => {
   getAdFormOn();
 });
 
-// нажатие кнопки reset
-setOnResetClick(resetCoordinate);
-
 // отправка формы
 setOnFormSubmit(async (data) => {
   await sendData(onSendDataSuccess, showErrorMessage, data);
@@ -54,4 +54,3 @@ getAdFormDisabled();
 getMapFilterDisabled();
 initMap(START_COORDINATE);
 getData(onGetDataSuccess, showAlert);
-
