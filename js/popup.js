@@ -1,5 +1,3 @@
-const cardTemplate = document.querySelector('#card').content.querySelector('.popup');
-
 const TYPES = {
   bungalow: {ru: 'Бунгало', minPrice: 0},
   flat: {ru: 'Квартира', minPrice: 1000},
@@ -8,6 +6,10 @@ const TYPES = {
   palace: {ru: 'Дворец', minPrice: 10000},
 };
 
+// шаблон объявлений
+const cardTemplate = document.querySelector('#card').content.querySelector('.popup');
+
+// определяет есть ли описание
 const renderDescription = (cardElement, description) => {
   const descriptionElement = cardElement.querySelector('.popup__description');
   if (description && description.length) {
@@ -17,6 +19,7 @@ const renderDescription = (cardElement, description) => {
   }
 };
 
+// определяет какие удобства указал пользователь
 const renderFeatures = (features) => {
   const fiaturesListFragment = document.createDocumentFragment();
 
@@ -29,6 +32,7 @@ const renderFeatures = (features) => {
   return fiaturesListFragment;
 };
 
+// Создает фото в объявлении
 const createPhoto = (photo, title) => {
   const photoElement = document.createElement('img');
   photoElement.classList.add('popup__photo');
@@ -40,6 +44,7 @@ const createPhoto = (photo, title) => {
   return photoElement;
 };
 
+// определяет есть ли фото
 const renderPhoto = (cardElement, photos, title) => {
   const photoList = cardElement.querySelector('.popup__photos');
   if (photos && photos.length) {
@@ -53,7 +58,8 @@ const renderPhoto = (cardElement, photos, title) => {
   }
 };
 
-const createOffers = ({ author, offer }) => {
+// Клонирует и заполняет шаблон карточек с объявлениями
+const renderCard = ({ author, offer }) => {
   const cardTemplateElement = cardTemplate.cloneNode(true);
   cardTemplateElement.querySelector('.popup__avatar').src = author.avatar;
   cardTemplateElement.querySelector('.popup__title').textContent = offer.title;
@@ -64,6 +70,8 @@ const createOffers = ({ author, offer }) => {
   cardTemplateElement.querySelector('.popup__text--time').textContent = `Заезд после ${offer.checkin}, выезд до ${offer.checkout}`;
 
   renderDescription(cardTemplateElement, offer.description);
+  renderPhoto(cardTemplateElement, offer.photos, offer.title);
+
   const cardFeatures = cardTemplateElement.querySelector('.popup__features');
   cardFeatures.innerHTML = '';
   if(offer.features) {
@@ -72,10 +80,9 @@ const createOffers = ({ author, offer }) => {
   } else {
     cardFeatures.remove();
   }
-  renderPhoto(cardTemplateElement, offer.photos, offer.title);
 
   return cardTemplateElement;
 
 };
-export {createOffers};
+export {renderCard};
 export {TYPES};
