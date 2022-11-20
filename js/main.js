@@ -1,4 +1,4 @@
-import { getMapFilterDisabled, getMapFilterOn, checkAllFilters, changeFilters } from './filter.js';
+import { getMapFilterDisabled, getMapFilterOn, checkAllFilters, changeFilters, resetFilter } from './filter.js';
 import { getAdFormDisabled, getAdFormOn, setAddresValue, resetForm, setOnFormSubmit, setOnResetClick } from './form.js';
 import { initMap, setOnMainPinMove, setOnMapLoad, setMainPinCoordinate } from './map.js';
 import { showSuccessMessage, showErrorMessage } from './message.js';
@@ -29,6 +29,8 @@ const onGetDataSuccess = (offers) => {
 // действия после отправки формы
 const onSendDataSuccess = () => {
   resetForm();
+  resetFilter();
+  getData((offers) => checkAllFilters(offers));
   resetCoordinate();
   showSuccessMessage();
 };
