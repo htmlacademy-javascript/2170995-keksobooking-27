@@ -1,4 +1,5 @@
-import {TYPES} from './popup.js';
+import { TYPES } from './popup.js';
+import { resetFilter } from './filter.js';
 
 const adForm = document.querySelector('.ad-form');
 const submitButton = adForm.querySelector('.ad-form__submit');
@@ -159,6 +160,7 @@ const setOnResetClick = (cb) => {
   adFormReset.addEventListener('click', (evt) => {
     evt.preventDefault();
     resetForm();
+    resetFilter();
     cb();
   });
 };

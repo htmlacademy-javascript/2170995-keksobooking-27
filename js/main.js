@@ -23,6 +23,7 @@ const onGetDataSuccess = (offers) => {
   getMapFilterOn();
   checkAllFilters(offers);
   changeFilters(debounce(() => checkAllFilters(offers), TIMEOUT_DELAY));
+  setOnResetClick(() => checkAllFilters(offers));
 };
 
 // действия после отправки формы

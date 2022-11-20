@@ -92,9 +92,15 @@ const changeFilters = (cb) => {
   });
 };
 
+const resetFilter = () => {
+  filterForm.reset();
+  clearMarker();
+};
+
 export {
   getMapFilterDisabled,
   getMapFilterOn,
   checkAllFilters,
-  changeFilters
+  changeFilters,
+  resetFilter
 };
