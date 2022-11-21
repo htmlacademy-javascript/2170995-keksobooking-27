@@ -1,5 +1,5 @@
 import { getMapFilterDisabled, getMapFilterOn, checkAllFilters, changeFilters, resetFilter } from './filter.js';
-import { getAdFormDisabled, getAdFormOn, setAddresValue, resetForm, setOnFormSubmit, setOnResetClick } from './form.js';
+import { getAdFormDisabled, getAdFormOn, setAddresValue, resetForm, setOnFormSubmit, setOnResetClick, getAvatarPreview, getPhotoPreview } from './form.js';
 import { initMap, setOnMainPinMove, setOnMapLoad, setMainPinCoordinate } from './map.js';
 import { showSuccessMessage, showErrorMessage } from './message.js';
 import { getData, sendData } from './server.js';
@@ -28,6 +28,12 @@ const onGetDataSuccess = (offers) => {
     checkAllFilters(offers);
   });
 };
+
+// Загрузка аватара
+getAvatarPreview();
+
+// Загрузка фото жилья
+getPhotoPreview();
 
 // действия после отправки формы
 const onSendDataSuccess = () => {

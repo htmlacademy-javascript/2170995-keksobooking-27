@@ -1,5 +1,10 @@
 import { TYPES } from './popup.js';
 import { resetFilter } from './filter.js';
+import {renderPhoto} from './pictures.js';
+
+const IMG_WIDTH = 70;
+const IMG_HEIGHT = 70;
+const IMG_DEFAULT = 'img/muffin-grey.svg';
 
 const adForm = document.querySelector('.ad-form');
 const submitButton = adForm.querySelector('.ad-form__submit');
@@ -28,6 +33,12 @@ const checkOutTime = adForm.querySelector('[name="timeout"]');
 
 const adress = adForm.querySelector('[name="address"]');
 const priceSliderElement = document.querySelector('.ad-form__slider');
+
+const adFormAvatar = document.querySelector('.ad-form-header__preview');
+const adFormPhoto = document.querySelector('.ad-form__photo');
+const avatarPreview = adFormAvatar.querySelector('img').cloneNode(true);
+const avatarChooser = adForm.querySelector('#avatar');
+const photoChooser = adForm.querySelector('#images');
 
 // Pristine
 const pristine = new Pristine(adForm, {
@@ -153,6 +164,8 @@ const resetForm = () => {
   adForm.reset();
   priceSliderElement.noUiSlider.set(price.value);
   price.value = TYPES[typeOfHousing.value].minPrice;
+  avatarPreview.src = IMG_DEFAULT;
+  adFormPhoto.innerHTML = '';
 };
 
 // Слушатель для кнопки 'reset'
@@ -161,6 +174,8 @@ const setOnResetClick = (cb) => {
     evt.preventDefault();
     resetForm();
     resetFilter();
+    avatarPreview.src = IMG_DEFAULT;
+    adFormPhoto.innerHTML = '';
     cb();
   });
 };
@@ -179,11 +194,39 @@ const setOnFormSubmit = (cb) => {
   });
 };
 
+// Аватар
+const getAvatar = (result) => {
+  const fragment = document.createDocumentFragment();
+  avatarPreview.src = result;
+  fragment.appendChild(avatarPreview);
+  adFormAvatar.innerHTML = '';
+  adFormAvatar.appendChild(fragment);
+};
+
+const getAvatarPreview = () => renderPhoto(avatarChooser, getAvatar);
+
+// Создать превью фотографии жилья
+const getPhoto = (result) => {
+  adFormPhoto.innerHTML = '';
+  const fragment = document.createDocumentFragment();
+  const element = document.createElement('img');
+  element.src = result;
+  element.alt = 'Фото жилья';
+  element.width = IMG_WIDTH;
+  element.height = IMG_HEIGHT;
+  fragment.appendChild(element);
+  adFormPhoto.appendChild(fragment);
+};
+
+const getPhotoPreview = () => renderPhoto(photoChooser, getPhoto);
+
 export {
   getAdFormDisabled,
   getAdFormOn,
   setAddresValue,
   resetForm,
   setOnFormSubmit,
-  setOnResetClick
+  setOnResetClick,
+  getAvatarPreview,
+  getPhotoPreview
 };
