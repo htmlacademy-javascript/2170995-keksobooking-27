@@ -1,4 +1,5 @@
-import {TYPES} from './popup.js';
+import { TYPES } from './popup.js';
+import { resetFilter } from './filter.js';
 
 const adForm = document.querySelector('.ad-form');
 const submitButton = adForm.querySelector('.ad-form__submit');
@@ -59,7 +60,6 @@ function getCapacityErrorMessage () {
 pristine.addValidator(room, validateRoom, getRoomErrorMessage);
 pristine.addValidator(capacity, validateCapacity, getCapacityErrorMessage);
 
-
 // Валидатор для типа жилья и цены
 typeOfHousing.addEventListener('change', () => {
   price.min = TYPES[typeOfHousing.value].minPrice;
@@ -77,7 +77,6 @@ function getPriceErrorMessage () {
 }
 
 pristine.addValidator(price, validatePrice, getPriceErrorMessage);
-
 
 // Синхронизация времени заезда/выезда
 checkInTime.addEventListener('change', () => {
@@ -110,11 +109,9 @@ noUiSlider.create(priceSliderElement, {
   },
 });
 
-
 priceSliderElement.noUiSlider.on('update', () => {
   price.value = priceSliderElement.noUiSlider.get();
 });
-
 
 // обработчик адреса
 const setAddresValue = ({lat, lng}) => {
@@ -163,6 +160,7 @@ const setOnResetClick = (cb) => {
   adFormReset.addEventListener('click', (evt) => {
     evt.preventDefault();
     resetForm();
+    resetFilter();
     cb();
   });
 };
@@ -189,4 +187,3 @@ export {
   setOnFormSubmit,
   setOnResetClick
 };
-

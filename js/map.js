@@ -1,20 +1,17 @@
-import {createOffers} from './popup.js';
+import { renderCard } from './popup.js';
 
-const OFFERS_COUNT = 10;
+const ZOOM_MAP = 12;
+
 const map = L.map('map-canvas');
-const markerGroup = L.layerGroup().addTo(map);
+
+// Главная метка (вид)
 const mainPinIcon = L.icon({
   iconUrl: '../img/main-pin.svg',
   iconSize: [52, 52],
   iconAnchor: [26, 52],
 });
 
-const pinIcon = L.icon({
-  iconUrl: '../img/pin.svg',
-  iconSize: [40, 40],
-  iconAnchor: [20, 40],
-});
-
+// Главная метка, отрисовка
 const mainMarker = L.marker(
   {
     lat: 0,
@@ -25,8 +22,17 @@ const mainMarker = L.marker(
     icon: mainPinIcon,
   }
 );
+
+// Метка для объявлений (вид)
+const pinIcon = L.icon({
+  iconUrl: '../img/pin.svg',
+  iconSize: [40, 40],
+  iconAnchor: [20, 40],
+});
+
+// Отображение карты и гл. метки
 const initMap = (coordinate) => {
-  map.setView(coordinate, 10);
+  map.setView(coordinate, ZOOM_MAP);
 
   L.tileLayer(
     'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
@@ -39,43 +45,47 @@ const initMap = (coordinate) => {
   mainMarker.addTo(map);
 };
 
-
-const renderOffers = (offers) => {
-  offers.forEach((offer) => {
-    const marker = L.marker(
-      {
-        lat: offer.location.lat,
-        lng: offer.location.lng,
-      },
-      {
-        icon: pinIcon,
-      },
-    );
-    marker.addTo(markerGroup).bindPopup(createOffers(offer));
-  });
-};
-
-const setAdPins = (offers) => {
-  markerGroup.clearLayers();
-  renderOffers(offers.slice(0, OFFERS_COUNT));
-};
-
-const setOnMapLoad = (cb) => {
-  map.on('load', cb);
-};
-
+// отслеживание коорднитат при движении гл. Метки
 const setOnMainPinMove = (cb) => {
   mainMarker.on('move', (evt) => cb(evt.target.getLatLng()));
 };
 
+// Создание слоя с группой меток
+const markerGroup = L.layerGroup().addTo(map);
+
+// Создание меток с объявлениями
+const createPinMarker = (data) => {
+  const pinMarker = L.marker(
+    data.location, {
+      icon: pinIcon,
+    },
+  );
+
+  pinMarker
+    .addTo(markerGroup)
+    .bindPopup(
+      renderCard(data), // привязывает балун-объявление к метке
+    );
+};
+
+// Очищение слоя с метками объявлений
+const clearMarker = () => markerGroup.clearLayers();
+
+// проверка что карта загрузилась
+const setOnMapLoad = (cb) => {
+  map.on('load', cb);
+};
+
+// Принимаем координаты гл. Метки
 const setMainPinCoordinate = (coordinate) => {
   mainMarker.setLatLng(coordinate);
 };
 
 export {
   initMap,
-  setOnMapLoad,
   setOnMainPinMove,
-  setAdPins,
+  createPinMarker,
+  clearMarker,
+  setOnMapLoad,
   setMainPinCoordinate
 };
